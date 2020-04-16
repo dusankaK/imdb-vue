@@ -1,7 +1,7 @@
 <template>
    <div class="container-fluid m-0 p-0">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <router-link class="nav-link" :to ="{ name: 'home'}">IMDB<span class="sr-only">(current)</span></router-link>
+      <router-link class="nav-link" :to ="{ name: 'home'}">Pocket IMDB</router-link>
       <button
         class="navbar-toggler"
         type="button"
@@ -13,25 +13,47 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <router-link class="nav-link" :to="{ name: 'home' }">
-              Home
-              <span class="sr-only">(current)</span>
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'register' }">Register</router-link>
-          </li>
-        </ul>
+      <div 
+          v-if="!isUserLoggedIn"
+          class="collapse navbar-collapse" 
+          id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <router-link class="nav-link" :to="{ name: 'login' }">Login</router-link>
+          <router-link class="nav-link" :to="{ name: 'register' }">Register</router-link>
+        </div>
+      </div>
+      <div 
+        v-else
+        class="collapse navbar-collapse" 
+        id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link" href="#" @click.prevent="logout()">Logout</a>
+        </div>
       </div>
     </nav>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex"
+
 export default {
-  name: "Header"
+  name: "Header",
+  computed: {
+    ...mapGetters({
+      isUserLoggedIn: "isUserLoggedIn"
+    })
+  },
+  methods: {
+    ...mapActions({
+      logoutUser: "logoutUser"
+    }),
+    logout() {
+      this.logoutUser()
+        .then(() => {
+          this.$router.push({ name: "login"})
+        })
+    }
+  }
 }
 </script>
