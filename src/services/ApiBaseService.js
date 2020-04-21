@@ -13,14 +13,9 @@ class ApiBaseService {
   setInterceptor = () => {
     this.client.interceptors.request.use(config => {
       const token = window.localStorage.getItem("token");
-
-      var tokenTrue = !!token
-      if (tokenTrue) {
-        const {assign} = Object
-        const {headers} = config
-        assign(headers, {Authorization: `Bearer ${token}`})
+      if (token) {
+        Object.assign(config.headers, { Authorization: `Bearer ${token}`});
       }
-
       return config;
     });
   };
