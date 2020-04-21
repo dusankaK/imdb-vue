@@ -2,7 +2,7 @@ import {movieService} from '../../services/MovieService.js';
 
 export const MovieStore = {
   state: {
-    allMovies: null,
+    allMovies: [],
     singleMovie: {} 
   },
   mutations: {
@@ -14,14 +14,13 @@ export const MovieStore = {
     }
   },
   actions: {
-    async fetchAllMovies(context) {
-      const response = await movieService.getAll();
+    async fetchAllMovies(context, page) {
+      const response = await movieService.getAll(page);
       context.commit("SET_MOVIES", response.data);
       return response;
     },
     async fetchSingleMovie(context, id) {
       const response = await movieService.getSingleMovie(id);
-      console.log(response);
       context.commit("SET_SINGLE_MOVIE", response.data);
       return response;
     }
