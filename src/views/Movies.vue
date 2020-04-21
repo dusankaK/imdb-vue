@@ -1,51 +1,28 @@
 <template>
 <div class="container">
-  <nav class="mt-5">
-    <ul class="pagination">
-      <li v-if="currentPage !==1" class="page-item">
-        <button class="page-link" @click="goPreviousPage">Previous</button>
-      </li>
-      <li v-else class="page-item disabled">
-        <p class="page-link">Previous</p>
-      </li>
-      <li v-for="index in allMovies.last_page" :key="index" class="page-item">
-        <button
-          v-if="currentPage !== index"
-          class="page-link"
-          @click="fetchAllMovies(index)">
-          {{index}}</button>
-        <div v-else class="page-item disabled">
-          <p class="page-link">{{ index }}</p>
-        </div>
-      </li>
-      <li v-if="currentPage !== allMovies.last_page" class="page-item">
-        <button class="page-link" @click="goNextPage">Next</button>
-      </li>
-      <li v-else class="page-item disabled">
-        <p class="page-link">Next</p>
-      </li>
-      <li v-if="currentPage !== allMovies.last_page" class="page-item">
-        <button class="page-link" @click="goLastPage">Last</button>
-      </li>
-      <li v-else class="page-item disabled">
-        <p class="page-link">Last</p>
-      </li>
-    </ul>
-</nav>
-  <div class="movie-container">
-    <div v-for="movie in allMovies.data" :key="movie.id">
-      <router-link :to="{ name: 'single-movie', params: {id : movie.id}}">
-        <h3>{{ movie.title }}</h3>
-      </router-link>
-      <img class="movie-image" :src="movie.image_url" :alt="movie.title">
-      <p>{{ movie.description }}</p>
-    </div>
+  <div v-if="allMovies.data">
+    <movies-pagination
+    :firstPage="firstPage"
+    :lastPage="lastPage"
+    :currentPage="currentPage"
+    @go-previous-page = "goPreviousPage"
+    @go-last-page = "goLastPage"
+    @go-next-page = "goNextPage"
+    @go-page-num = "fetchAllMovies"
+    ></movies-pagination>
+    <movie-item :allMovies="allMovies.data"></movie-item>
+  </div>
+
+  <div v-else>
+    <h3 class="alert alert-danger">There are no movies in our database.</h3>
   </div>
 </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import MoviesPagination from "../components/MoviesPagination.vue";
+import MovieItem from "../components/MovieItem.vue";
 
 export default {
   name: "Movies",
@@ -92,20 +69,10 @@ export default {
         return this.fetchAllMovies(this.lastPage);
       }
     }
-
+  },
+  components: {
+    MoviesPagination,
+    MovieItem
   }
 }
 </script>
-
-<style>
-.movie-container {
-  border: 1px solid rgb(216, 210, 210);
-  border-radius: 3px;
-  padding: 10px;
-  margin: 15px 0 15px 5px ;
-  max-width: 70vw;
-}
-.movie-image {
-  max-height: 150px;
-}
-</style>
