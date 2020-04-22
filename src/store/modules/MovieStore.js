@@ -14,10 +14,11 @@ export const MovieStore = {
     }
   },
   actions: {
-    async fetchAllMovies(context, page) {
-      const response = await movieService.getAll(page);
-      context.commit("SET_MOVIES", response.data);
-      return response;
+    fetchAllMovies({commit}, {page, searchTerm=""}) {
+      movieService.getAll(page, searchTerm)
+        .then(response => {
+          commit("SET_MOVIES", response.data)
+        })
     },
     async fetchSingleMovie(context, id) {
       const response = await movieService.getSingleMovie(id);
