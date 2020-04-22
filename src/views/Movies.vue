@@ -21,11 +21,15 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import MoviesPagination from "../components/MoviesPagination.vue";
 import MovieItem from "../components/MovieItem.vue";
+import MoviesPagination from "../components/MoviesPagination.vue";
 
 export default {
   name: "Movies",
+  components: {
+    MovieItem,
+    MoviesPagination
+  },
   created() {
     this.$store.dispatch("fetchAllMovies", 1)
   },
@@ -43,7 +47,6 @@ export default {
       return this.allMovies.current_page;
     }
   },
-
   methods: {
     ...mapActions({
       fetchAllMovies: "fetchAllMovies"
@@ -69,10 +72,6 @@ export default {
         return this.fetchAllMovies(this.lastPage);
       }
     }
-  },
-  components: {
-    MoviesPagination,
-    MovieItem
   }
 }
 </script>
