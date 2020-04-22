@@ -3,9 +3,9 @@
     <div class="movie">
       <h1 class="movie-title">{{ singleMovie.title }}</h1>
       <img class="movie-image" :src="singleMovie.image_url" :alt="singleMovie.title" />
-      <div class="movie-genre" v-if="singleMovie.genre">
-        <p>Genre:</p>
-        <p class="ml-2" v-for="genre in singleMovie.genre" :key="genre.id">
+      <div class="movie-genre" v-if="singleMovie.genres">
+        <p>Genres:</p>
+        <p class="ml-2" v-for="genre in singleMovie.genres" :key="genre.id">
           <i>{{ genre.name }}</i>
         </p>
       </div>
