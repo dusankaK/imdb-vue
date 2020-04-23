@@ -6,7 +6,8 @@ const ENDPOINTS = {
   MOVIEGENRE: (page, genre) => `/movies?page=${page}&genre=${genre}`,
   MOVIESEARCHGENRE: (page, searchTerm, genre) => `/movies?page=${page}&search=${searchTerm}&genre=${genre}`,
   MOVIE: id => `/movies/${id}`,
-  GENRE: "/genres"
+  GENRE: "/genres",
+  MOVIEREACTIONS: "/movies/reactions"
 };
 
 class MovieService {
@@ -27,6 +28,9 @@ class MovieService {
   }
   getGenres() {
     return apiBaseService.getApiClient().get(ENDPOINTS.GENRE);
+  }
+  reactToMovie(reaction) {
+    return apiBaseService.getApiClient().post(ENDPOINTS.MOVIEREACTIONS, reaction)
   }
 }
 
