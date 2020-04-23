@@ -37,6 +37,10 @@ export const MovieStore = {
       const response = await movieService.reactToMovie(reaction);
       alert(response.data.message);
       return response.data;
+    },
+    async addComment(context, content) {
+      const response = await movieService.sendComment(content);
+      return response;
     }
   },
   getters: {

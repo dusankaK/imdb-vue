@@ -30,6 +30,29 @@
         <p>Visit count:</p>
         <span class="ml-2">{{ singleMovie.visit_count }}</span>
       </div>
+
+      <div class="comment-container mt-4 mb-5">
+        <form @submit.prevent="addNewComment" class="d-flex flex-row align-items-center">
+          <input
+            class="comment-input form-control mt-3 mb-3"
+            type="text"
+            placeholder="This is my comment!"
+            v-model="newComment"
+            required
+          />
+          <button class="btn btn-success ml-3" type="submit">
+            <strong>Add comment</strong>
+          </button>
+        </form>
+        <ul class="list-group" v-if="singleMovie.comments && singleMovie.comments.length > 0">
+          <li
+            class="comment-body list-group-item"
+            v-for="comment in singleMovie.comments"
+            :key="comment.id"
+          >{{ comment.content }}</li>
+        </ul>
+        <h4 v-else class="alert alert-danger">No comments.</h4>
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +62,11 @@ import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "SingleMovie",
+  data() {
+    return {
+      newComment: ""
+    }
+  },
   created() {
     this.$store.dispatch("fetchSingleMovie", this.$route.params.id);
   },
@@ -49,13 +77,33 @@ export default {
   },
   methods: {
     ...mapActions({
-      reactToMovie: "reactToMovie"
+      reactToMovie: "reactToMovie",
+      addComment: "addComment",
+      fetchSingleMovie: "fetchSingleMovie"
     }),
     like() {
       this.reactToMovie({movie_id: this.$route.params.id, reaction: "like"})
+        .then(()=>{
+          this.fetchSingleMovie(this.singleMovie.id);
+        })
     },
     dislike() {
       this.reactToMovie({movie_id: this.$route.params.id, reaction: "dislike"})
+        .then(()=>{
+          this.fetchSingleMovie(this.singleMovie.id);
+        })
+    },
+    addNewComment() {
+      this.addComment({
+        content: this.newComment,
+        movie_id: this.singleMovie.id
+      })
+      .then(()=> {
+        this.fetchSingleMovie(this.singleMovie.id)
+      })
+      .then(()=> {
+        this.newComment=""
+      })
     }
   },
 }
