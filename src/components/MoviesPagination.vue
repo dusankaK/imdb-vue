@@ -2,32 +2,17 @@
   <nav class="mt-5">
     <ul class="pagination">
       <li v-if="currentPage !==1" class="page-item">
-        <button class="page-link" @click="onPreviousPage">Previous</button>
+        <button class="page-link" @click="goPage(firstPage)" :disabled='currentPage == 1'>First</button>
       </li>
-      <li v-else class="page-item disabled">
-        <p class="page-link">Previous</p>
+      <li v-if="currentPage !==1" class="page-item">
+        <button class="page-link" @click="goPage(currentPage - 1)" :disabled='currentPage == 1'>Previous</button>
       </li>
-      <li v-for="index in lastPage" :key="index" class="page-item">
-        <button
-          v-if="currentPage !== index"
-          class="page-link"
-          @click="onPageNumClick(index)">
-          {{index}}</button>
-        <div v-else class="page-item disabled">
-          <p class="page-link">{{ index }}</p>
-        </div>
+      <button class="page-link"><span>{{currentPage}}</span></button>
+      <li v-if="currentPage !== lastPage" class="page-item">
+        <button class="page-link" @click="goPage(currentPage + 1)" :disabled='currentPage == lastPage'>Next</button>
       </li>
       <li v-if="currentPage !== lastPage" class="page-item">
-        <button class="page-link" @click="onNextPage">Next</button>
-      </li>
-      <li v-else class="page-item disabled">
-        <p class="page-link">Next</p>
-      </li>
-      <li v-if="currentPage !== lastPage" class="page-item">
-        <button class="page-link" @click="onLastPage">Last</button>
-      </li>
-      <li v-else class="page-item disabled">
-        <p class="page-link">Last</p>
+        <button class="page-link" @click="goPage(lastPage)" :disabled='currentPage == lastPage'>Last</button>
       </li>
     </ul>
 </nav>
@@ -48,17 +33,8 @@ export default {
     }
   },
   methods: {
-    onPreviousPage() {
-      this.$emit("go-previous-page");
-    },
-    onLastPage() {
-      this.$emit("go-last-page");
-    },
-    onNextPage() {
-      this.$emit("go-next-page");
-    },
-    onPageNumClick(page) {
-      this.$emit("go-page-num", page)
+    goPage(page) {
+      this.$emit("go-page", page)
     }
   }
 }

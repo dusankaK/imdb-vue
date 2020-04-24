@@ -18,10 +18,7 @@
     :firstPage="firstPage"
     :lastPage="lastPage"
     :currentPage="currentPage"
-    @go-previous-page = "goPreviousPage"
-    @go-last-page = "goLastPage"
-    @go-next-page = "goNextPage"
-    @go-page-num = "goPageNum"
+    @go-page = "onPage"
     ></movies-pagination>
     <movie-item :allMovies="allMovies.data"></movie-item>
   </div>
