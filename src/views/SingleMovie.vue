@@ -44,15 +44,26 @@
             <strong>Add comment</strong>
           </button>
         </form>
-        <ul class="list-group" v-if="singleMovie.comments && singleMovie.comments.length > 0">
-          <li
-            class="comment-body list-group-item"
-            v-for="comment in singleMovie.comments"
-            :key="comment.id"
-          >{{ comment.content }}</li>
-        </ul>
-        <h4 v-else class="alert alert-danger">No comments.</h4>
-      </div>
+
+        <div v-if="singleMovieComments">
+          <ul class="list-group">
+            <li
+              class="comment-body list-group-item"
+              v-for="comment in singleMovieComments"
+              :key="comment.id"
+            >{{ comment.content }}</li>
+          </ul>
+          <button
+            class="btn btn-primary mt-2"
+            type="button"
+            @click="loadMore"
+            :disabled="!moreComments"
+          >
+          <strong>Load More</strong>
+          </button>
+        </div>
+          <h4 v-else class="alert alert-danger">No comments.</h4>
+        </div>
     </div>
   </div>
 </template>
@@ -64,7 +75,9 @@ export default {
   name: "SingleMovie",
   data() {
     return {
-      newComment: ""
+      newComment: "",
+      currentPage: 1,
+      moreComments: true
     }
   },
   created() {
@@ -72,14 +85,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      singleMovie: "singleMovie" 
+      singleMovie: "singleMovie",
+      singleMovieComments: "singleMovieComments" 
     })
   },
   methods: {
     ...mapActions({
       reactToMovie: "reactToMovie",
       addComment: "addComment",
-      fetchSingleMovie: "fetchSingleMovie"
+      fetchSingleMovie: "fetchSingleMovie",
+      loadMoreComments: "loadMoreComments"
     }),
     like() {
       this.reactToMovie({movie_id: this.$route.params.id, reaction: "like"})
@@ -94,18 +109,23 @@ export default {
         })
     },
     addNewComment() {
-      this.addComment({
-        content: this.newComment,
-        movie_id: this.singleMovie.id
-      })
-      .then(()=> {
-        this.fetchSingleMovie(this.singleMovie.id)
-      })
-      .then(()=> {
-        this.newComment=""
-      })
+      this.addComment({content: this.newComment, movie_id: this.singleMovie.id})
+        .then(()=> {this.fetchSingleMovie(this.singleMovie.id)})
+          .then(()=> {this.newComment=""})
+    },
+    checkMoreComments() {
+      if(this.currentPage == this.singleMovie.comments.last_page) {
+        this.moreComments = false;
+      } else {
+        this.moreComments = true;
+      }
+    },
+    loadMore() {
+      this.loadMoreComments({id: this.singleMovie.id, page: this.currentPage + 1})
+      this.currentPage++;
+      this.checkMoreComments();
     }
-  },
+  }
 }
 </script>
 

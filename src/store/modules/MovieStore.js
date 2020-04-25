@@ -4,7 +4,8 @@ export const MovieStore = {
   state: {
     allMovies: [],
     singleMovie: {},
-    genres: [] 
+    genres: [],
+    setSingleComment: [] 
   },
   mutations: {
     SET_MOVIES(state, movies) {
@@ -15,6 +16,12 @@ export const MovieStore = {
     },
     SET_GENRES(state, genres) {
       state.genres = genres
+    },
+    SET_SINGLE_COMMENTS(state, comments) {
+      state.setSingleComment = comments
+    },
+    PUSH_COMMENTS(state, comments) {
+      state.setSingleComment.push(...comments);
     }
   },
   actions: {
@@ -31,7 +38,14 @@ export const MovieStore = {
     async fetchSingleMovie(context, id) {
       const response = await movieService.getSingleMovie(id);
       context.commit("SET_SINGLE_MOVIE", response.data);
+      context.commit("SET_SINGLE_COMMENTS", response.data.comments.data)
       return response;
+    },
+    async loadMoreComments({commit}, {id, page}) {
+      movieService.paginateComments(id, page)
+        .then(response => {
+          commit("PUSH_COMMENTS", response.data.comments.data)
+      });
     },
     async reactToMovie(context, reaction) {
       const response = await movieService.reactToMovie(reaction);
@@ -52,6 +66,9 @@ export const MovieStore = {
     },
     allGenres(state) {
       return state.genres;
+    },
+    singleMovieComments(state) {
+      return state.setSingleComment;
     }
   }
 }

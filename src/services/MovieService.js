@@ -8,7 +8,8 @@ const ENDPOINTS = {
   MOVIE: id => `/movies/${id}`,
   GENRE: "/genres",
   MOVIEREACTIONS: "/movies/reactions",
-  MOVIECOMMENTS: "/comments"
+  MOVIECOMMENTS: "/comments",
+  COMMENTSPAGINATION: (id, page) => `/movies/${id}?page=${page}`
 };
 
 class MovieService {
@@ -35,6 +36,9 @@ class MovieService {
   }
   sendComment(comment) {
     return apiBaseService.getApiClient().post(ENDPOINTS.MOVIECOMMENTS, comment)
+  }
+  paginateComments(id, page) {
+    return apiBaseService.getApiClient().get(ENDPOINTS.COMMENTSPAGINATION(id, page));
   }
 }
 
