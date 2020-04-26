@@ -37,14 +37,15 @@ export const MovieStore = {
     },
     async fetchSingleMovie(context, id) {
       const response = await movieService.getSingleMovie(id);
-      context.commit("SET_SINGLE_MOVIE", response.data);
-      context.commit("SET_SINGLE_COMMENTS", response.data.comments.data)
+      context.commit("SET_SINGLE_MOVIE", response.data.movie);
+      context.commit("SET_SINGLE_COMMENTS", response.data.movie.comments.data)
+      console.log(response);
       return response;
     },
     async loadMoreComments({commit}, {id, page}) {
       movieService.paginateComments(id, page)
         .then(response => {
-          commit("PUSH_COMMENTS", response.data.comments.data)
+          commit("PUSH_COMMENTS", response.data.movie.comments.data)
       });
     },
     async reactToMovie(context, reaction) {
@@ -54,6 +55,10 @@ export const MovieStore = {
     },
     async addComment(context, content) {
       const response = await movieService.sendComment(content);
+      return response;
+    },
+    async handleWatchlist(context, mId) {
+      const response = await movieService.handleWatchList(mId);
       return response;
     }
   },

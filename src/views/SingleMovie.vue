@@ -1,7 +1,19 @@
 <template>
   <div class="container">
     <div class="movie">
-      <h1 class="movie-title">{{ singleMovie.title }}</h1>
+      <div class="d-flex flex-row align-items-center">
+        <h1 class="movie-title">{{ singleMovie.title }}</h1>
+        <div class="ml-3 mb-5">
+          <button
+            class="btn"
+            :class="[hasWatched ? 'btn-danger' : 'btn-success']"
+            @click="handleWatchlistClick"
+            type="button"
+          >
+            {{ hasWatched ? 'Mark as unwatched' : 'Mark as watched' }}
+          </button>
+        </div>
+      </div>
       <img class="movie-image" :src="singleMovie.image_url" :alt="singleMovie.title" />
       <div class="movie-genre" v-if="singleMovie.genres">
         <p>Genres:</p>
@@ -73,15 +85,19 @@ import { mapGetters, mapActions } from "vuex"
 
 export default {
   name: "SingleMovie",
+  async created() {
+    const response = await this.fetchSingleMovie(this.$route.params.id);
+    console.log(response.data.watched);
+    this.hasWatched = response.data.watched;
+    //return response.data.watched;
+  },
   data() {
     return {
       newComment: "",
       currentPage: 1,
-      moreComments: true
+      moreComments: true,
+      hasWatched: false
     }
-  },
-  created() {
-    this.$store.dispatch("fetchSingleMovie", this.$route.params.id);
   },
   computed: {
     ...mapGetters({
@@ -94,7 +110,8 @@ export default {
       reactToMovie: "reactToMovie",
       addComment: "addComment",
       fetchSingleMovie: "fetchSingleMovie",
-      loadMoreComments: "loadMoreComments"
+      loadMoreComments: "loadMoreComments",
+      handleWatchlist: "handleWatchlist"
     }),
     like() {
       this.reactToMovie({movie_id: this.$route.params.id, reaction: "like"})
@@ -124,9 +141,13 @@ export default {
       this.loadMoreComments({id: this.singleMovie.id, page: this.currentPage + 1})
       this.currentPage++;
       this.checkMoreComments();
-    }
+    },
+    handleWatchlistClick() {
+      this.handleWatchlist(this.$route.params.id).then(r => {
+        this.hasWatched = r.data.watched;
+      });
   }
-}
+}}
 </script>
 
 <style scoped>
