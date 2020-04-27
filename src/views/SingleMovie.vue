@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container d-flex">
     <div class="movie">
       <div class="d-flex flex-row align-items-center">
         <h1 class="movie-title">{{ singleMovie.title }}</h1>
@@ -77,18 +77,26 @@
           <h4 v-else class="alert alert-danger">No comments.</h4>
         </div>
     </div>
+        <related-movies :genres="genres" />
+
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import RelatedMovies from "../components/RelatedMovies.vue"
 
 export default {
   name: "SingleMovie",
+  components: {
+    RelatedMovies
+  },
   async created() {
     const response = await this.fetchSingleMovie(this.$route.params.id);
     console.log(response.data.watched);
     this.hasWatched = response.data.watched;
+    this.$store.dispatch("fetchRelatedMovies", this.genres);
+
     //return response.data.watched;
   },
   data() {
@@ -96,14 +104,17 @@ export default {
       newComment: "",
       currentPage: 1,
       moreComments: true,
-      hasWatched: false
+      hasWatched: false,
     }
   },
   computed: {
     ...mapGetters({
       singleMovie: "singleMovie",
       singleMovieComments: "singleMovieComments" 
-    })
+    }),
+    genres() {
+      return this.singleMovie.genres;
+    }
   },
   methods: {
     ...mapActions({

@@ -48,6 +48,12 @@ class MovieService {
   getPopularMovies() {
     return apiBaseService.getApiClient().get(ENDPOINTS.POPULARMOVIES);
   }
+  getRelatedMovies(genresArr) {
+    let genres = {
+      genres: genresArr
+    }
+    return apiBaseService.getApiClient().post(`/movies/related`, genres)
+  }
   createMovie(movie) {
     return apiBaseService.getApiClient().post("/movies", movie)
   }

@@ -6,7 +6,8 @@ export const MovieStore = {
     singleMovie: {},
     genres: [],
     setSingleComment: [],
-    popularMovies: [] 
+    popularMovies: [],
+    relatedMovies: [] 
   },
   mutations: {
     SET_MOVIES(state, movies) {
@@ -26,6 +27,9 @@ export const MovieStore = {
     },
     SET_POPULAR_MOVIES(state, movies) {
       state.popularMovies = movies;
+    },
+    SET_RELATED_MOVIES(state, movies) {
+      state.relatedMovies = movies;
     }
   },
   actions: {
@@ -68,6 +72,13 @@ export const MovieStore = {
       const response = await movieService.getPopularMovies();
       context.commit("SET_POPULAR_MOVIES", response.data)
       return response;
+    },
+    async fetchRelatedMovies({ commit }, genres) {
+      var filtered = genres.map(e => {
+        return e.name;
+      });
+      var response = await movieService.getRelatedMovies(filtered);
+      commit("SET_RELATED_MOVIES", response.data);
     }
   },
   getters: {
@@ -85,6 +96,9 @@ export const MovieStore = {
     },
     popularMovies(state) {
       return state.popularMovies;
+    },
+    relatedMovies(state) {
+      return state.relatedMovies;
     }
   }
 }
