@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import { store } from "../store/index.js";
 import Movies from '../views/Movies.vue';
 import SingleMovie from '../views/SingleMovie.vue';
+import CreateMovie from "../views/CreateMovie.vue";
 import Login from '../views/auth/Login.vue';
 import Register from '../views/auth/Register.vue';
 
@@ -21,6 +22,14 @@ const routes = [
     path: "/movies/:id",
     name: "single-movie",
     component: SingleMovie,
+    meta: {
+      guest: false
+    }
+  },
+  {
+    path: "/new-movie",
+    name: "create-movie",
+    component: CreateMovie,
     meta: {
       guest: false
     }

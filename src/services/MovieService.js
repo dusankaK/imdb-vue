@@ -48,6 +48,9 @@ class MovieService {
   getPopularMovies() {
     return apiBaseService.getApiClient().get(ENDPOINTS.POPULARMOVIES);
   }
+  createMovie(movie) {
+    return apiBaseService.getApiClient().post("/movies", movie)
+  }
 }
 
 export const movieService = new MovieService();
