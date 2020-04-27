@@ -10,7 +10,8 @@ const ENDPOINTS = {
   MOVIEREACTIONS: "/movies/reactions",
   MOVIECOMMENTS: "/comments",
   COMMENTSPAGINATION: (id, page) => `/movies/${id}?page=${page}`,
-  MOVIEWATCHLIST: "/movies/watchlist"
+  MOVIEWATCHLIST: "/movies/watchlist",
+  POPULARMOVIES: "movies?popular=true"
 };
 
 class MovieService {
@@ -43,6 +44,9 @@ class MovieService {
   }
   handleWatchList(mId) {
     return apiBaseService.getApiClient().post(ENDPOINTS.MOVIEWATCHLIST, { movie_id: mId });
+  }
+  getPopularMovies() {
+    return apiBaseService.getApiClient().get(ENDPOINTS.POPULARMOVIES);
   }
 }
 

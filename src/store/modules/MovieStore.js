@@ -5,7 +5,8 @@ export const MovieStore = {
     allMovies: [],
     singleMovie: {},
     genres: [],
-    setSingleComment: [] 
+    setSingleComment: [],
+    popularMovies: [] 
   },
   mutations: {
     SET_MOVIES(state, movies) {
@@ -22,6 +23,9 @@ export const MovieStore = {
     },
     PUSH_COMMENTS(state, comments) {
       state.setSingleComment.push(...comments);
+    },
+    SET_POPULAR_MOVIES(state, movies) {
+      state.popularMovies = movies;
     }
   },
   actions: {
@@ -39,7 +43,6 @@ export const MovieStore = {
       const response = await movieService.getSingleMovie(id);
       context.commit("SET_SINGLE_MOVIE", response.data.movie);
       context.commit("SET_SINGLE_COMMENTS", response.data.movie.comments.data)
-      console.log(response);
       return response;
     },
     async loadMoreComments({commit}, {id, page}) {
@@ -60,6 +63,11 @@ export const MovieStore = {
     async handleWatchlist(context, mId) {
       const response = await movieService.handleWatchList(mId);
       return response;
+    },
+    async fetchPopularMovies(context) {
+      const response = await movieService.getPopularMovies();
+      context.commit("SET_POPULAR_MOVIES", response.data)
+      return response;
     }
   },
   getters: {
@@ -74,6 +82,9 @@ export const MovieStore = {
     },
     singleMovieComments(state) {
       return state.setSingleComment;
+    },
+    popularMovies(state) {
+      return state.popularMovies;
     }
   }
 }
