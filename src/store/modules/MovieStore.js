@@ -74,10 +74,10 @@ export const MovieStore = {
       return response;
     },
     async fetchRelatedMovies({ commit }, genres) {
-      var filtered = genres.map(e => {
+      let filtered = genres.map(e => {
         return e.name;
       });
-      var response = await movieService.getRelatedMovies(filtered);
+      const response = await movieService.getRelatedMovies(filtered);
       commit("SET_RELATED_MOVIES", response.data);
     }
   },

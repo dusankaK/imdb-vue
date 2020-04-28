@@ -28,14 +28,14 @@
             <p class="likes m-0 mr-2 p-0">Likes:</p>
             <span>{{ singleMovie.likes }}</span>
           </div>
-          <button @click="like" type="button" class="btn btn-success">Like</button>
+          <button @click="rating('like')" type="button" class="btn btn-success">Like</button>
         </div>
         <div class="d-flex justify-content-between mt-3">
           <div class="d-flex align-items-center">
             <p class="dislikes m-0 mr-2 p-0">Dislikes:</p>
             <span>{{ singleMovie.dislikes }}</span>
           </div>
-          <button @click="dislike" type="button" class="btn btn-danger">Dislike</button>
+          <button @click="rating('dislike')" type="button" class="btn btn-danger">Dislike</button>
         </div>
       </div>
       <div class="d-flex flex-row mt-3">
@@ -96,8 +96,6 @@ export default {
     console.log(response.data.watched);
     this.hasWatched = response.data.watched;
     this.$store.dispatch("fetchRelatedMovies", this.genres);
-
-    //return response.data.watched;
   },
   data() {
     return {
@@ -124,29 +122,20 @@ export default {
       loadMoreComments: "loadMoreComments",
       handleWatchlist: "handleWatchlist"
     }),
-    like() {
-      this.reactToMovie({movie_id: this.$route.params.id, reaction: "like"})
-        .then(()=>{
-          this.fetchSingleMovie(this.singleMovie.id);
-        })
-    },
-    dislike() {
-      this.reactToMovie({movie_id: this.$route.params.id, reaction: "dislike"})
-        .then(()=>{
-          this.fetchSingleMovie(this.singleMovie.id);
-        })
+    rating(type) {
+      this.reactToMovie({movie_id: this.$route.params.id, reaction: type}).then(() => {
+        this.fetchSingleMovie(this.singleMovie.id);
+    })
     },
     addNewComment() {
       this.addComment({content: this.newComment, movie_id: this.singleMovie.id})
-        .then(()=> {this.fetchSingleMovie(this.singleMovie.id)})
-          .then(()=> {this.newComment=""})
+        .then(()=> {
+          this.fetchSingleMovie(this.singleMovie.id)
+          this.newComment=""
+          })
     },
     checkMoreComments() {
-      if(this.currentPage == this.singleMovie.comments.last_page) {
-        this.moreComments = false;
-      } else {
-        this.moreComments = true;
-      }
+      if(this.currentPage == this.singleMovie.comments.last_page) this.moreComments = false;
     },
     loadMore() {
       this.loadMoreComments({id: this.singleMovie.id, page: this.currentPage + 1})
