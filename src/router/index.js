@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import { store } from "../store/index.js";
 import Movies from '../views/Movies.vue';
+import SingleMovie from '../views/SingleMovie.vue';
 import Login from '../views/auth/Login.vue';
 import Register from '../views/auth/Register.vue';
 
@@ -9,9 +10,17 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
+    path: "/movies",
     name: 'home',
     component: Movies,
+    meta: {
+      guest: false
+    }
+  },
+  {
+    path: "/movies/:id",
+    name: "single-movie",
+    component: SingleMovie,
     meta: {
       guest: false
     }
