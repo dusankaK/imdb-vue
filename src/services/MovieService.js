@@ -7,7 +7,9 @@ const ENDPOINTS = {
   MOVIESEARCHGENRE: (page, searchTerm, genre) => `/movies?page=${page}&search=${searchTerm}&genre=${genre}`,
   MOVIE: id => `/movies/${id}`,
   GENRE: "/genres",
-  MOVIEREACTIONS: "/movies/reactions"
+  MOVIEREACTIONS: "/movies/reactions",
+  MOVIECOMMENTS: "/comments",
+  COMMENTSPAGINATION: (id, page) => `/movies/${id}?page=${page}`
 };
 
 class MovieService {
@@ -31,6 +33,12 @@ class MovieService {
   }
   reactToMovie(reaction) {
     return apiBaseService.getApiClient().post(ENDPOINTS.MOVIEREACTIONS, reaction)
+  }
+  sendComment(comment) {
+    return apiBaseService.getApiClient().post(ENDPOINTS.MOVIECOMMENTS, comment)
+  }
+  paginateComments(id, page) {
+    return apiBaseService.getApiClient().get(ENDPOINTS.COMMENTSPAGINATION(id, page));
   }
 }
 
