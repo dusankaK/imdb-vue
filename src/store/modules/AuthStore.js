@@ -5,7 +5,8 @@ export const AuthStore = {
   {
     token: localStorage.getItem("token"),
     registerErrors: [],
-    loginErrors: null
+    loginErrors: null,
+    userId: null
   },
   mutations: 
   {
@@ -17,6 +18,9 @@ export const AuthStore = {
     },
     SET_LOGIN_ERRORS: (state, error) => {
       state.loginErrors = error
+    },
+    SET_USER_ID: (state, id) => {
+      state.userId = id
     }
   },
   actions: 
@@ -36,8 +40,10 @@ export const AuthStore = {
       try {
         const response = await authService.login(credentials);
         context.commit("SET_TOKEN", response.data.token);
+        context.commit("SET_USER_ID", response.data.user_id)
         context.commit("SET_LOGIN_ERRORS", null);
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user_id", response.data.user_id)
         return response;
       } catch (exception) {
         context.commit("SET_LOGIN_ERRORS", exception.response.data.error);
@@ -45,8 +51,8 @@ export const AuthStore = {
     },
     async logoutUser(context){
       context.commit('SET_TOKEN', null); 
-      localStorage.removeItem("token")
-
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_id")
     }
   },
   getters: {
@@ -58,6 +64,9 @@ export const AuthStore = {
     },
     isUserLoggedIn(state) {
       return !!state.token
+    },
+    userId(state) {
+      return state.userId  
     }
   }
 }

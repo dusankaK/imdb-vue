@@ -32,6 +32,11 @@ export const MovieStore = {
       const response = await movieService.getSingleMovie(id);
       context.commit("SET_SINGLE_MOVIE", response.data);
       return response;
+    },
+    async reactToMovie(context, reaction) {
+      const response = await movieService.reactToMovie(reaction);
+      alert(response.data.message);
+      return response.data;
     }
   },
   getters: {
