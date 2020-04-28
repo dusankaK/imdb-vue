@@ -5,7 +5,9 @@ export const MovieStore = {
     allMovies: [],
     singleMovie: {},
     genres: [],
-    setSingleComment: [] 
+    setSingleComment: [],
+    popularMovies: [],
+    relatedMovies: [] 
   },
   mutations: {
     SET_MOVIES(state, movies) {
@@ -22,6 +24,12 @@ export const MovieStore = {
     },
     PUSH_COMMENTS(state, comments) {
       state.setSingleComment.push(...comments);
+    },
+    SET_POPULAR_MOVIES(state, movies) {
+      state.popularMovies = movies;
+    },
+    SET_RELATED_MOVIES(state, movies) {
+      state.relatedMovies = movies;
     }
   },
   actions: {
@@ -37,14 +45,14 @@ export const MovieStore = {
     },
     async fetchSingleMovie(context, id) {
       const response = await movieService.getSingleMovie(id);
-      context.commit("SET_SINGLE_MOVIE", response.data);
-      context.commit("SET_SINGLE_COMMENTS", response.data.comments.data)
+      context.commit("SET_SINGLE_MOVIE", response.data.movie);
+      context.commit("SET_SINGLE_COMMENTS", response.data.movie.comments.data)
       return response;
     },
     async loadMoreComments({commit}, {id, page}) {
       movieService.paginateComments(id, page)
         .then(response => {
-          commit("PUSH_COMMENTS", response.data.comments.data)
+          commit("PUSH_COMMENTS", response.data.movie.comments.data)
       });
     },
     async reactToMovie(context, reaction) {
@@ -55,6 +63,22 @@ export const MovieStore = {
     async addComment(context, content) {
       const response = await movieService.sendComment(content);
       return response;
+    },
+    async handleWatchlist(context, mId) {
+      const response = await movieService.handleWatchList(mId);
+      return response;
+    },
+    async fetchPopularMovies(context) {
+      const response = await movieService.getPopularMovies();
+      context.commit("SET_POPULAR_MOVIES", response.data)
+      return response;
+    },
+    async fetchRelatedMovies({ commit }, genres) {
+      let filtered = genres.map(e => {
+        return e.name;
+      });
+      const response = await movieService.getRelatedMovies(filtered);
+      commit("SET_RELATED_MOVIES", response.data);
     }
   },
   getters: {
@@ -69,6 +93,12 @@ export const MovieStore = {
     },
     singleMovieComments(state) {
       return state.setSingleComment;
+    },
+    popularMovies(state) {
+      return state.popularMovies;
+    },
+    relatedMovies(state) {
+      return state.relatedMovies;
     }
   }
 }

@@ -20,6 +20,7 @@
         <div class="navbar-nav">
           <router-link class="nav-link" :to="{ name: 'login' }">Login</router-link>
           <router-link class="nav-link" :to="{ name: 'register' }">Register</router-link>
+
         </div>
       </div>
       <div 
@@ -28,6 +29,7 @@
         id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-link" href="#" @click.prevent="logout()">Logout</a>
+          <router-link class="nav-link" :to="{ name: 'create-movie' }">Add Movie</router-link>
         </div>
       </div>
     </nav>

@@ -1,7 +1,19 @@
 <template>
-  <div class="container">
+  <div class="container d-flex">
     <div class="movie">
-      <h1 class="movie-title">{{ singleMovie.title }}</h1>
+      <div class="d-flex flex-row align-items-center">
+        <h1 class="movie-title">{{ singleMovie.title }}</h1>
+        <div class="ml-3 mb-5">
+          <button
+            class="btn"
+            :class="[hasWatched ? 'btn-danger' : 'btn-success']"
+            @click="handleWatchlistClick"
+            type="button"
+          >
+            {{ hasWatched ? 'Mark as unwatched' : 'Mark as watched' }}
+          </button>
+        </div>
+      </div>
       <img class="movie-image" :src="singleMovie.image_url" :alt="singleMovie.title" />
       <div class="movie-genre" v-if="singleMovie.genres">
         <p>Genres:</p>
@@ -16,14 +28,14 @@
             <p class="likes m-0 mr-2 p-0">Likes:</p>
             <span>{{ singleMovie.likes }}</span>
           </div>
-          <button @click="like" type="button" class="btn btn-success">Like</button>
+          <button @click="rating('like')" type="button" class="btn btn-success">Like</button>
         </div>
         <div class="d-flex justify-content-between mt-3">
           <div class="d-flex align-items-center">
             <p class="dislikes m-0 mr-2 p-0">Dislikes:</p>
             <span>{{ singleMovie.dislikes }}</span>
           </div>
-          <button @click="dislike" type="button" class="btn btn-danger">Dislike</button>
+          <button @click="rating('dislike')" type="button" class="btn btn-danger">Dislike</button>
         </div>
       </div>
       <div class="d-flex flex-row mt-3">
@@ -65,68 +77,77 @@
           <h4 v-else class="alert alert-danger">No comments.</h4>
         </div>
     </div>
+        <related-movies :genres="genres" />
+
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
+import RelatedMovies from "../components/RelatedMovies.vue"
 
 export default {
   name: "SingleMovie",
+  components: {
+    RelatedMovies
+  },
+  async created() {
+    const response = await this.fetchSingleMovie(this.$route.params.id);
+    console.log(response.data.watched);
+    this.hasWatched = response.data.watched;
+    this.$store.dispatch("fetchRelatedMovies", this.genres);
+  },
   data() {
     return {
       newComment: "",
       currentPage: 1,
-      moreComments: true
+      moreComments: true,
+      hasWatched: false,
     }
-  },
-  created() {
-    this.$store.dispatch("fetchSingleMovie", this.$route.params.id);
   },
   computed: {
     ...mapGetters({
       singleMovie: "singleMovie",
       singleMovieComments: "singleMovieComments" 
-    })
+    }),
+    genres() {
+      return this.singleMovie.genres;
+    }
   },
   methods: {
     ...mapActions({
       reactToMovie: "reactToMovie",
       addComment: "addComment",
       fetchSingleMovie: "fetchSingleMovie",
-      loadMoreComments: "loadMoreComments"
+      loadMoreComments: "loadMoreComments",
+      handleWatchlist: "handleWatchlist"
     }),
-    like() {
-      this.reactToMovie({movie_id: this.$route.params.id, reaction: "like"})
-        .then(()=>{
-          this.fetchSingleMovie(this.singleMovie.id);
-        })
-    },
-    dislike() {
-      this.reactToMovie({movie_id: this.$route.params.id, reaction: "dislike"})
-        .then(()=>{
-          this.fetchSingleMovie(this.singleMovie.id);
-        })
+    rating(type) {
+      this.reactToMovie({movie_id: this.$route.params.id, reaction: type}).then(() => {
+        this.fetchSingleMovie(this.singleMovie.id);
+    })
     },
     addNewComment() {
       this.addComment({content: this.newComment, movie_id: this.singleMovie.id})
-        .then(()=> {this.fetchSingleMovie(this.singleMovie.id)})
-          .then(()=> {this.newComment=""})
+        .then(()=> {
+          this.fetchSingleMovie(this.singleMovie.id)
+          this.newComment=""
+          })
     },
     checkMoreComments() {
-      if(this.currentPage == this.singleMovie.comments.last_page) {
-        this.moreComments = false;
-      } else {
-        this.moreComments = true;
-      }
+      if(this.currentPage == this.singleMovie.comments.last_page) this.moreComments = false;
     },
     loadMore() {
       this.loadMoreComments({id: this.singleMovie.id, page: this.currentPage + 1})
       this.currentPage++;
       this.checkMoreComments();
-    }
+    },
+    handleWatchlistClick() {
+      this.handleWatchlist(this.$route.params.id).then(r => {
+        this.hasWatched = r.data.watched;
+      });
   }
-}
+}}
 </script>
 
 <style scoped>

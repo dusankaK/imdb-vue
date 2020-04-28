@@ -9,7 +9,9 @@ const ENDPOINTS = {
   GENRE: "/genres",
   MOVIEREACTIONS: "/movies/reactions",
   MOVIECOMMENTS: "/comments",
-  COMMENTSPAGINATION: (id, page) => `/movies/${id}?page=${page}`
+  COMMENTSPAGINATION: (id, page) => `/movies/${id}?page=${page}`,
+  MOVIEWATCHLIST: "/movies/watchlist",
+  POPULARMOVIES: "movies?popular=true"
 };
 
 class MovieService {
@@ -39,6 +41,21 @@ class MovieService {
   }
   paginateComments(id, page) {
     return apiBaseService.getApiClient().get(ENDPOINTS.COMMENTSPAGINATION(id, page));
+  }
+  handleWatchList(mId) {
+    return apiBaseService.getApiClient().post(ENDPOINTS.MOVIEWATCHLIST, { movie_id: mId });
+  }
+  getPopularMovies() {
+    return apiBaseService.getApiClient().get(ENDPOINTS.POPULARMOVIES);
+  }
+  getRelatedMovies(genresArr) {
+    let genres = {
+      genres: genresArr
+    }
+    return apiBaseService.getApiClient().post(`/movies/related`, genres)
+  }
+  createMovie(movie) {
+    return apiBaseService.getApiClient().post("/movies", movie)
   }
 }
 
