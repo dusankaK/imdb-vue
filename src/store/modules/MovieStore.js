@@ -11,7 +11,7 @@ export const MovieStore = {
   },
   mutations: {
     SET_MOVIES(state, movies) {
-      state.allMovies = movies
+      state.allMovies = movies.data
     },
     SET_SINGLE_MOVIE(state, movie) {
       state.singleMovie = movie
@@ -33,11 +33,15 @@ export const MovieStore = {
     }
   },
   actions: {
-    fetchAllMovies({commit}, { page, searchTerm = "", genre = [] }) {
-      movieService.getAll(page, searchTerm, genre)
-        .then(response => {
-          commit("SET_MOVIES", response.data)
-        })
+    async fetchAllMovies({commit}, { page, searchTerm = "", genre = [], elastic = false }) {
+      const response = await movieService.getAll(page, searchTerm, genre, elastic);
+      if(elastic === true) {
+        commit("SET_MOVIES", {data: response.data, elastic: true});
+        return response;
+      }
+      commit("SET_MOVIES", {data: response.data, elastic: false});
+      return response;
+
     },
     async fetchGenres({commit}){
       const response = await movieService.getGenres();
@@ -70,7 +74,7 @@ export const MovieStore = {
     },
     async fetchPopularMovies(context) {
       const response = await movieService.getPopularMovies();
-      context.commit("SET_POPULAR_MOVIES", response.data)
+      context.commit("SET_POPULAR_MOVIES", response.data.data)
       return response;
     },
     async fetchRelatedMovies({ commit }, genres) {
@@ -84,6 +88,7 @@ export const MovieStore = {
   getters: {
     allMovies(state) {
       return state.allMovies;
+      
     },
     singleMovie(state) {
       return state.singleMovie;
